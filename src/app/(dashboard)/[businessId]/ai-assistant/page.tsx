@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation'
 import { useBusinessStore } from '@/stores/business-store'
 import { useDataStore, type BusinessData } from '@/stores/data-store'
 import { Button } from '@/components/ui/button'
-import { Send, Bot, User, Sparkles, CheckCircle2, XCircle, PlusCircle } from 'lucide-react'
+import { Send, Bot, User, Sparkles, CheckCircle2, XCircle, PlusCircle, Zap } from 'lucide-react'
 import type { ChatMessage } from '@/types'
 import type { AIAction } from '@/lib/ai'
 import { cn, formatCurrency } from '@/lib/utils'
@@ -58,8 +58,8 @@ function actionLabel(action: AIAction): string {
   switch (action.type) {
     case 'add_customer':  return `Add customer: ${d.name}${d.company ? ` (${d.company})` : ''}`
     case 'add_employee':  return `Add employee: ${d.name} — ${d.position}`
-    case 'add_sale':      return `Record sale: ${d.description} — £${d.amount}`
-    case 'add_expense':   return `Record expense: ${d.description} — £${d.amount}`
+    case 'add_sale':      return `Record sale: ${d.description} — ${formatCurrency(Number(d.amount), 'GBP')}`
+    case 'add_expense':   return `Record expense: ${d.description} — ${formatCurrency(Number(d.amount), 'GBP')}`
     case 'add_task':      return `Add task: ${d.title}`
     case 'add_meeting':   return `Record meeting: ${d.title} on ${d.date}`
     default:              return action.type
@@ -250,76 +250,79 @@ export default function AIAssistantPage() {
   }
 
   return (
-    <div className="flex h-full flex-col bg-slate-50">
+    <div className="flex h-full flex-col bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Header */}
-      <div className="border-b border-slate-200 bg-white px-6 py-4 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-sm shadow-indigo-500/25">
-            <Bot className="h-5 w-5 text-white" />
+      <div className="border-b border-slate-200/70 bg-white/80 backdrop-blur-xl px-7 py-5 shadow-lg shadow-slate-900/5">
+        <div className="flex items-center gap-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 shadow-xl shadow-cyan-500/30">
+            <Zap className="h-6 w-6 text-white fill-white" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-900">AI Business Advisor</p>
-            <p className="text-xs text-slate-400">
+            <p className="text-base font-bold text-slate-900">NovaBiz AI Advisor</p>
+            <p className="text-xs text-slate-600 mt-1 font-medium">
               Answers · Advice · Adds data with your confirmation · {bizName}
             </p>
           </div>
-          <div className="ml-auto flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 ring-1 ring-emerald-200/80">
-            <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
-            <span className="text-xs font-medium text-emerald-700">Groq · Llama 3</span>
+          <div className="ml-auto flex items-center gap-2 rounded-full bg-gradient-to-r from-emerald-50 to-emerald-100 px-4 py-2 ring-1 ring-emerald-200 shadow-md shadow-emerald-500/10">
+            <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
+            <span className="text-xs font-bold text-emerald-700">Groq · Llama 3</span>
           </div>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto space-y-5 p-5">
+      <div className="flex-1 overflow-y-auto space-y-6 p-7">
         {messages.map((m) => (
-          <div key={m.id} className={cn('flex gap-3', m.role === 'user' && 'flex-row-reverse')}>
+          <div key={m.id} className={cn('flex gap-4', m.role === 'user' && 'flex-row-reverse')}>
             {/* Avatar */}
             <div className={cn(
-              'flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl text-xs shadow-sm',
+              'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl text-xs shadow-lg',
               m.role === 'assistant'
-                ? 'bg-gradient-to-br from-indigo-500 to-violet-600 text-white'
-                : 'bg-white border border-slate-200 text-slate-600'
+                ? 'bg-gradient-to-br from-cyan-400 to-blue-600 text-white shadow-cyan-500/20'
+                : 'bg-white border border-slate-200 text-slate-700 shadow-slate-200/50'
             )}>
-              {m.role === 'assistant' ? <Bot className="h-4 w-4" /> : <User className="h-4 w-4" />}
+              {m.role === 'assistant' ? <Bot className="h-5 w-5" /> : <User className="h-5 w-5" />}
             </div>
 
-            <div className={cn('flex flex-col gap-2', m.role === 'user' ? 'items-end' : 'items-start', 'max-w-[82%]')}>
+            <div className={cn('flex flex-col gap-3', m.role === 'user' ? 'items-end' : 'items-start', 'max-w-[80%]')}>
               {/* Bubble */}
               <div className={cn(
-                'rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap',
+                'rounded-3xl px-5 py-4 text-base leading-relaxed whitespace-pre-wrap shadow-xl',
                 m.role === 'assistant'
-                  ? 'bg-white border border-slate-200/80 text-slate-800 shadow-sm'
-                  : 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-sm shadow-indigo-500/25'
+                  ? 'bg-white/90 border border-slate-200/70 text-slate-800 backdrop-blur-sm'
+                  : 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-cyan-500/25'
               )}>
                 {m.content}
               </div>
 
               {/* Pending confirmation UI */}
               {m.pendingActions && m.status === 'pending' && (
-                <div className="w-full rounded-2xl border border-amber-200 bg-amber-50 p-4 shadow-sm">
-                  <p className="mb-2.5 text-xs font-bold text-amber-800 uppercase tracking-wide">AI wants to add:</p>
-                  <ul className="mb-3.5 space-y-2">
+                <div className="w-full rounded-3xl border border-amber-200 bg-gradient-to-r from-amber-50 to-amber-100/80 p-5 shadow-xl backdrop-blur-sm">
+                  <p className="mb-4 text-xs font-black text-amber-900 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <Sparkles className="h-4 w-4" />
+                    AI wants to add:
+                  </p>
+                  <ul className="mb-5 space-y-3">
                     {m.pendingActions.map((a, i) => (
-                      <li key={i} className="flex items-center gap-2 rounded-lg bg-white px-3 py-2 ring-1 ring-amber-200/80 text-xs text-amber-900 font-medium">
-                        <PlusCircle className="h-3.5 w-3.5 flex-shrink-0 text-amber-500" />
+                      <li key={i} className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 ring-2 ring-amber-200/70 text-xs font-bold text-amber-900 shadow-md">
+                        <PlusCircle className="h-4 w-4 flex-shrink-0 text-amber-500" />
                         {actionLabel(a)}
                       </li>
                     ))}
                   </ul>
-                  <div className="flex gap-2">
+                  <div className="flex gap-3">
                     <button
                       onClick={() => confirm(m.id)}
-                      className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 px-3 py-2 text-xs font-bold text-white hover:from-emerald-500 hover:to-green-500 shadow-sm transition-all active:scale-[0.98]"
+                      className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-600 to-green-600 px-5 py-3 text-xs font-black text-white hover:from-emerald-500 hover:to-green-500 shadow-xl shadow-emerald-500/25 transition-all active:scale-[0.98]"
                     >
-                      <CheckCircle2 className="h-3.5 w-3.5" />
+                      <CheckCircle2 className="h-4 w-4" />
                       Yes, add it
                     </button>
                     <button
                       onClick={() => cancel(m.id)}
-                      className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
+                      className="flex flex-1 items-center justify-center gap-2 rounded-2xl border-2 border-slate-200 bg-white px-5 py-3 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-all"
                     >
-                      <XCircle className="h-3.5 w-3.5" />
+                      <XCircle className="h-4 w-4" />
                       No, cancel
                     </button>
                   </div>
@@ -328,12 +331,12 @@ export default function AIAssistantPage() {
 
               {/* Confirmed */}
               {m.confirmedActions && m.status === 'confirmed' && (
-                <div className="w-full space-y-1.5">
+                <div className="w-full space-y-2">
                   {m.confirmedActions.map((a, i) => (
-                    <div key={i} className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 shadow-sm">
-                      <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0 text-emerald-600" />
-                      <span className="text-xs font-semibold text-emerald-800">{actionLabel(a)}</span>
-                      <span className="ml-auto rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-600">Added ✓</span>
+                    <div key={i} className="flex items-center gap-3 rounded-2xl border border-emerald-200 bg-gradient-to-r from-emerald-50 to-emerald-100 px-4 py-3 shadow-xl">
+                      <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-emerald-600" />
+                      <span className="text-xs font-bold text-emerald-900">{actionLabel(a)}</span>
+                      <span className="ml-auto rounded-full bg-emerald-200 px-3 py-1 text-xs font-black text-emerald-700">Added ✓</span>
                     </div>
                   ))}
                 </div>
@@ -341,9 +344,9 @@ export default function AIAssistantPage() {
 
               {/* Cancelled */}
               {m.status === 'cancelled' && (
-                <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm">
-                  <XCircle className="h-3.5 w-3.5 text-slate-400" />
-                  <span className="text-xs text-slate-400">Cancelled — nothing was added</span>
+                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 shadow-xl backdrop-blur-sm">
+                  <XCircle className="h-4 w-4 text-slate-500" />
+                  <span className="text-xs font-bold text-slate-600">Cancelled — nothing was added</span>
                 </div>
               )}
             </div>
@@ -352,14 +355,14 @@ export default function AIAssistantPage() {
 
         {/* Typing indicator */}
         {loading && (
-          <div className="flex gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-sm">
-              <Bot className="h-4 w-4 text-white" />
+          <div className="flex gap-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 shadow-xl shadow-cyan-500/20">
+              <Bot className="h-5 w-5 text-white" />
             </div>
-            <div className="rounded-2xl border border-slate-200/80 bg-white px-4 py-3 shadow-sm">
-              <div className="flex gap-1">
+            <div className="rounded-3xl border border-slate-200/70 bg-white/90 px-5 py-4 shadow-xl backdrop-blur-sm">
+              <div className="flex gap-2">
                 {[0, 150, 300].map((d) => (
-                  <div key={d} className="h-2 w-2 animate-bounce rounded-full bg-indigo-300" style={{ animationDelay: `${d}ms` }} />
+                  <div key={d} className="h-3 w-3 animate-bounce rounded-full bg-gradient-to-r from-cyan-400 to-blue-600" style={{ animationDelay: `${d}ms` }} />
                 ))}
               </div>
             </div>
@@ -370,19 +373,19 @@ export default function AIAssistantPage() {
 
       {/* Example prompts */}
       {messages.length === 1 && (
-        <div className="border-t border-slate-100 bg-white px-5 py-3">
-          <div className="mb-2 flex items-center gap-1.5 text-xs text-slate-400">
-            <Sparkles className="h-3 w-3 text-indigo-400" />
-            <span>Try these — <span className="text-emerald-600 font-medium">green = add data</span>, white = ask/advise:</span>
+        <div className="border-t border-slate-200/70 bg-white/90 backdrop-blur-xl px-7 py-5">
+          <div className="mb-3 flex items-center gap-2 text-xs font-bold text-slate-600">
+            <Sparkles className="h-4 w-4 text-cyan-500" />
+            <span>Try these — <span className="text-emerald-600">green = add data</span>, white = ask/advise:</span>
           </div>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {EXAMPLES.map(({ text, add }) => (
               <button key={text} onClick={() => send(text)}
                 className={cn(
-                  'rounded-full border px-3 py-1 text-xs font-medium transition-all hover:scale-[1.02]',
+                  'rounded-full border px-4 py-2 text-xs font-bold transition-all hover:scale-[1.03] shadow-md',
                   add
-                    ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 shadow-sm shadow-emerald-100'
-                    : 'border-slate-200 bg-white text-slate-500 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 shadow-sm'
+                    ? 'border-emerald-200 bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-800 hover:from-emerald-100 hover:to-emerald-200 shadow-emerald-100'
+                    : 'border-slate-200 bg-white text-slate-600 hover:border-cyan-200 hover:bg-cyan-50 hover:text-cyan-700 shadow-slate-100'
                 )}>
                 {add ? '＋ ' : ''}{text}
               </button>
@@ -392,20 +395,20 @@ export default function AIAssistantPage() {
       )}
 
       {/* Input */}
-      <div className="border-t border-slate-200 bg-white p-4">
-        <div className="flex gap-2">
+      <div className="border-t border-slate-200/70 bg-white/90 backdrop-blur-xl p-6 shadow-lg shadow-slate-900/5">
+        <div className="flex gap-3">
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), send())}
             placeholder='Ask anything, or "Add [name] as a customer"...'
-            className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 shadow-sm transition-all focus:bg-white focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            className="flex-1 rounded-2xl border border-slate-200 bg-slate-50 px-5 py-3.5 text-base text-slate-900 placeholder-slate-400 shadow-md transition-all focus:bg-white focus:border-cyan-400 focus:outline-none focus:ring-4 focus:ring-cyan-500/20"
           />
-          <Button onClick={() => send()} isLoading={loading} disabled={!input.trim()}>
-            <Send className="h-4 w-4" />
+          <Button onClick={() => send()} isLoading={loading} disabled={!input.trim()} className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 shadow-xl shadow-cyan-500/25 rounded-2xl px-6 py-3.5">
+            <Send className="h-5 w-5" />
           </Button>
         </div>
-        <p className="mt-1.5 text-center text-xs text-slate-300">
+        <p className="mt-2.5 text-center text-xs font-medium text-slate-400">
           AI asks for confirmation before adding anything · Data saves to your dashboard instantly
         </p>
       </div>

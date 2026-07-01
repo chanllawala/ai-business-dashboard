@@ -12,8 +12,6 @@ const EVENTS = [
   { date: '2025-07-05', title: 'Q2 report due (James)', type: 'warning' },
 ]
 
-type BadgeVariant = 'danger' | 'warning' | 'info' | 'default'
-
 export default function CalendarPage() {
   const today = new Date()
   const [current, setCurrent] = useState(new Date(today.getFullYear(), today.getMonth(), 1))

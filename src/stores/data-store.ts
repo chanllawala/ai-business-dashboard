@@ -31,6 +31,11 @@ const empty = (): BusinessData => ({
   notes: [],
 })
 
+// Stable reference for reads so `get()` doesn't return a new object every
+// call — a fresh object each time breaks useSyncExternalStore's snapshot
+// stability check and causes an infinite render loop.
+const EMPTY_DATA = empty()
+
 interface DataStore {
   data: Record<string, BusinessData>
   get: (businessId: string) => BusinessData
@@ -63,7 +68,7 @@ export const useDataStore = create<DataStore>()(
   persist(
     (set, get) => ({
       data: {},
-      get: (businessId) => get().data[businessId] ?? empty(),
+      get: (businessId) => get().data[businessId] ?? EMPTY_DATA,
 
       addCustomer: (bid, c) => set((s) => ({ data: { ...s.data, [bid]: { ...s.data[bid] ?? empty(), customers: [c, ...(s.data[bid]?.customers ?? [])] } } })),
       updateCustomer: (bid, id, p) => set((s) => ({ data: { ...s.data, [bid]: { ...s.data[bid] ?? empty(), customers: patch(s.data[bid]?.customers ?? [], id, p) } } })),
@@ -87,11 +92,11 @@ export const useDataStore = create<DataStore>()(
       removeMeeting: (bid, id) => set((s) => ({ data: { ...s.data, [bid]: { ...s.data[bid] ?? empty(), meetings: (s.data[bid]?.meetings ?? []).filter((x) => x.id !== id) } } })),
 
       addDocument: (bid, d) => set((s) => ({ data: { ...s.data, [bid]: { ...s.data[bid] ?? empty(), documents: [d, ...(s.data[bid]?.documents ?? [])] } } })),
+      removeDocument: (bid, id) => set((s) => ({ data: { ...s.data, [bid]: { ...s.data[bid] ?? empty(), documents: (s.data[bid]?.documents ?? []).filter((x) => x.id !== id) } } })),
 
       addNote: (bid, n) => set((s) => ({ data: { ...s.data, [bid]: { ...s.data[bid] ?? empty(), notes: [n, ...(s.data[bid]?.notes ?? [])] } } })),
       updateNote: (bid, id, p) => set((s) => ({ data: { ...s.data, [bid]: { ...s.data[bid] ?? empty(), notes: patch(s.data[bid]?.notes ?? [], id, p) } } })),
       removeNote: (bid, id) => set((s) => ({ data: { ...s.data, [bid]: { ...s.data[bid] ?? empty(), notes: (s.data[bid]?.notes ?? []).filter((x) => x.id !== id) } } })),
-      removeDocument: (bid, id) => set((s) => ({ data: { ...s.data, [bid]: { ...s.data[bid] ?? empty(), documents: (s.data[bid]?.documents ?? []).filter((x) => x.id !== id) } } })),
     }),
     { name: 'business-data' }
   )

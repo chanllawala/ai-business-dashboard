@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useParams, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { useBusinessStore } from '@/stores/business-store'
 import { useDataStore, type Note } from '@/stores/data-store'
 import { Button } from '@/components/ui/button'

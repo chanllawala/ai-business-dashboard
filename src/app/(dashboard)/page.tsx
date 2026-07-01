@@ -3,7 +3,7 @@
 import { useBusinessStore } from '@/stores/business-store'
 import { useDataStore } from '@/stores/data-store'
 import { formatCurrency, getInitials } from '@/lib/utils'
-import { TrendingUp, CheckSquare, Users, Plus, Bot, ArrowRight } from 'lucide-react'
+import { TrendingUp, CheckSquare, Users, Plus, Bot, ArrowRight, Zap } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import type { Business } from '@/types'
@@ -17,55 +17,55 @@ function BusinessCard({ business }: { business: Business }) {
   const openTasks = biz.tasks.filter((t) => t.status !== 'completed').length
 
   return (
-    <div className="group flex flex-col rounded-2xl border border-slate-200/80 bg-white shadow-sm transition-all hover:shadow-lg hover:-translate-y-0.5">
+    <div className="group flex flex-col rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur-sm shadow-xl shadow-slate-900/5 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5">
       {/* Card top accent */}
-      <div className="h-1.5 w-full rounded-t-2xl bg-gradient-to-r from-indigo-500 to-violet-500" />
+      <div className="h-2 w-full rounded-t-3xl bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600" />
 
-      <div className="flex-1 p-5">
+      <div className="flex-1 p-6">
         {/* Business header */}
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-sm font-bold text-white shadow-sm shadow-indigo-500/25">
+        <div className="flex items-start justify-between mb-5">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 text-base font-black text-white shadow-lg shadow-cyan-500/30">
               {getInitials(business.name)}
             </div>
             <div>
-              <p className="font-semibold text-slate-900">{business.name}</p>
+              <p className="font-bold text-slate-900 text-lg">{business.name}</p>
               {business.industry && (
-                <p className="text-xs text-slate-400">{business.industry}</p>
+                <p className="text-xs text-slate-500 mt-1 font-medium">{business.industry}</p>
               )}
             </div>
           </div>
-          <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500">
+          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">
             {business.currency}
           </span>
         </div>
 
         {/* Stats row */}
-        <div className="grid grid-cols-3 gap-2 mb-4">
-          <div className="rounded-xl bg-emerald-50 p-3 text-center">
-            <TrendingUp className="mx-auto mb-1 h-3.5 w-3.5 text-emerald-600" />
-            <p className="text-xs text-emerald-600 font-medium mb-0.5">Revenue</p>
-            <p className="text-xs font-bold text-emerald-800 tabular-nums">
+        <div className="grid grid-cols-3 gap-3 mb-5">
+          <div className="rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 p-4 text-center border border-emerald-100">
+            <TrendingUp className="mx-auto mb-2 h-5 w-5 text-emerald-600" />
+            <p className="text-xs text-emerald-700 font-bold mb-1">Revenue</p>
+            <p className="text-sm font-black text-emerald-800 tabular-nums">
               {formatCurrency(revenue, business.currency)}
             </p>
           </div>
-          <div className="rounded-xl bg-blue-50 p-3 text-center">
-            <Users className="mx-auto mb-1 h-3.5 w-3.5 text-blue-600" />
-            <p className="text-xs text-blue-600 font-medium mb-0.5">Customers</p>
-            <p className="text-xs font-bold text-blue-800">{biz.customers.length}</p>
+          <div className="rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100/50 p-4 text-center border border-blue-100">
+            <Users className="mx-auto mb-2 h-5 w-5 text-blue-600" />
+            <p className="text-xs text-blue-700 font-bold mb-1">Customers</p>
+            <p className="text-sm font-black text-blue-800">{biz.customers.length}</p>
           </div>
-          <div className={`rounded-xl p-3 text-center ${openTasks > 0 ? 'bg-amber-50' : 'bg-slate-50'}`}>
-            <CheckSquare className={`mx-auto mb-1 h-3.5 w-3.5 ${openTasks > 0 ? 'text-amber-600' : 'text-slate-400'}`} />
-            <p className={`text-xs font-medium mb-0.5 ${openTasks > 0 ? 'text-amber-600' : 'text-slate-400'}`}>Tasks</p>
-            <p className={`text-xs font-bold ${openTasks > 0 ? 'text-amber-800' : 'text-slate-500'}`}>{openTasks} open</p>
+          <div className={`rounded-2xl p-4 text-center border ${openTasks > 0 ? 'bg-gradient-to-br from-amber-50 to-amber-100/50 border-amber-100' : 'bg-gradient-to-br from-slate-50 to-slate-100/50 border-slate-100'}`}>
+            <CheckSquare className={`mx-auto mb-2 h-5 w-5 ${openTasks > 0 ? 'text-amber-600' : 'text-slate-500'}`} />
+            <p className={`text-xs font-bold mb-1 ${openTasks > 0 ? 'text-amber-700' : 'text-slate-600'}`}>Tasks</p>
+            <p className={`text-sm font-black ${openTasks > 0 ? 'text-amber-800' : 'text-slate-700'}`}>{openTasks} open</p>
           </div>
         </div>
 
         {/* Profit indicator */}
         {(revenue > 0 || expenses > 0) && (
-          <div className={`mb-4 flex items-center justify-between rounded-xl px-3 py-2 text-xs ${profit >= 0 ? 'bg-emerald-50' : 'bg-red-50'}`}>
-            <span className={profit >= 0 ? 'text-emerald-700' : 'text-red-700'}>Net profit</span>
-            <span className={`font-bold tabular-nums ${profit >= 0 ? 'text-emerald-800' : 'text-red-700'}`}>
+          <div className={`mb-5 flex items-center justify-between rounded-2xl px-4 py-3 text-sm font-black ${profit >= 0 ? 'bg-gradient-to-r from-emerald-50 to-emerald-100/50 text-emerald-800 border border-emerald-100' : 'bg-gradient-to-r from-red-50 to-red-100/50 text-red-800 border border-red-100'}`}>
+            <span>Net Profit</span>
+            <span className="tabular-nums text-lg">
               {profit >= 0 ? '+' : ''}{formatCurrency(profit, business.currency)}
             </span>
           </div>
@@ -73,21 +73,21 @@ function BusinessCard({ business }: { business: Business }) {
       </div>
 
       {/* Action buttons */}
-      <div className="flex gap-2 border-t border-slate-100 p-4">
+      <div className="flex gap-3 border-t border-slate-100 p-5">
         <Link
           href={`/${business.id}/overview`}
           onClick={() => setActiveBusiness(business)}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-slate-200 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+          className="flex flex-1 items-center justify-center gap-2 rounded-2xl border-2 border-slate-200 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 transition-all duration-200"
         >
           Dashboard
-          <ArrowRight className="h-3 w-3" />
+          <ArrowRight className="h-4 w-4" />
         </Link>
         <Link
           href={`/${business.id}/ai-assistant`}
           onClick={() => setActiveBusiness(business)}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 py-2 text-xs font-medium text-white hover:from-indigo-500 hover:to-violet-500 shadow-sm shadow-indigo-500/25 transition-all"
+          className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-600 py-3 text-sm font-bold text-white hover:from-cyan-500 hover:to-blue-500 shadow-xl shadow-cyan-500/25 transition-all duration-200"
         >
-          <Bot className="h-3.5 w-3.5" />
+          <Bot className="h-4 w-4" />
           Ask AI
         </Link>
       </div>
@@ -100,22 +100,22 @@ export default function HomePage() {
 
   if (businesses.length === 0) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-6 p-8 text-center">
+      <div className="flex h-full flex-col items-center justify-center gap-8 p-10 text-center">
         <div className="relative">
-          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-xl shadow-indigo-500/30">
-            <Bot className="h-10 w-10 text-white" />
+          <div className="flex h-28 w-28 items-center justify-center rounded-3xl bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 shadow-2xl shadow-cyan-500/40">
+            <Zap className="h-14 w-14 text-white fill-white" />
           </div>
-          <div className="absolute -right-1 -top-1 h-5 w-5 animate-pulse rounded-full bg-emerald-400 shadow-sm" />
+          <div className="absolute -right-2 -top-2 h-7 w-7 animate-pulse rounded-full bg-emerald-400 shadow-lg shadow-emerald-400/50" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Welcome to AI Business Hub</h1>
-          <p className="mt-2 text-sm text-slate-500 max-w-sm leading-relaxed">
-            Add your first business to get started. Then add customers, sales, and expenses — your AI advisor will answer questions and give you real advice.
+          <h1 className="text-3xl font-black text-slate-900">Welcome to NovaBiz</h1>
+          <p className="mt-3 text-base text-slate-600 max-w-md leading-relaxed">
+            Add your first business to get started. Then manage customers, sales, employees — and let your AI advisor handle the rest!
           </p>
         </div>
         <Link href="/settings">
-          <Button size="lg">
-            <Plus className="h-4 w-4" />
+          <Button size="lg" className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 shadow-xl shadow-cyan-500/25">
+            <Plus className="h-5 w-5 mr-2" />
             Add Your First Business
           </Button>
         </Link>
@@ -124,15 +124,15 @@ export default function HomePage() {
   }
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-xl font-bold text-slate-900">Your Businesses</h1>
-        <p className="mt-0.5 text-sm text-slate-400">
-          {businesses.length} business{businesses.length !== 1 ? 'es' : ''} · Select one or use the sidebar
+    <div className="p-8">
+      <div className="mb-8">
+        <h1 className="text-2xl font-black text-slate-900">Your Businesses</h1>
+        <p className="mt-2 text-sm text-slate-600 font-medium">
+          {businesses.length} business{businesses.length !== 1 ? 'es' : ''} — Select one or use the sidebar
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {businesses.map((biz) => (
           <BusinessCard key={biz.id} business={biz} />
         ))}
@@ -140,12 +140,12 @@ export default function HomePage() {
         {/* Add new card */}
         <Link
           href="/settings"
-          className="flex min-h-[200px] flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-slate-200 p-6 text-center transition-all hover:border-indigo-300 hover:bg-indigo-50/50 group"
+          className="flex min-h-[250px] flex-col items-center justify-center gap-4 rounded-3xl border-2 border-dashed border-slate-300 bg-white/50 p-8 text-center transition-all duration-300 hover:border-cyan-400 hover:bg-cyan-50/60 group"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-dashed border-slate-300 group-hover:border-indigo-400 transition-colors">
-            <Plus className="h-5 w-5 text-slate-400 group-hover:text-indigo-500 transition-colors" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 group-hover:border-cyan-400 transition-colors duration-300">
+            <Plus className="h-7 w-7 text-slate-400 group-hover:text-cyan-500 transition-colors duration-300" />
           </div>
-          <p className="text-sm font-medium text-slate-400 group-hover:text-indigo-600 transition-colors">
+          <p className="text-base font-bold text-slate-500 group-hover:text-cyan-600 transition-colors duration-300">
             Add another business
           </p>
         </Link>

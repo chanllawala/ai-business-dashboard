@@ -3,20 +3,17 @@
 import { useState } from 'react'
 import { useBusinessStore } from '@/stores/business-store'
 import { Button } from '@/components/ui/button'
-import { Building2, Plus, Trash2, CheckCircle, AlertCircle, Bot } from 'lucide-react'
+import { Building2, Plus, Trash2, CheckCircle, AlertCircle, Bot, Zap } from 'lucide-react'
 import { getInitials } from '@/lib/utils'
 import type { Business } from '@/types'
 
 const INDUSTRIES = ['Technology', 'Retail', 'Food & Beverage', 'Healthcare', 'Finance', 'Consulting', 'Manufacturing', 'Real Estate', 'Other']
-const inputCls = 'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
+const inputCls = 'w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-all duration-200'
 
 export default function SettingsPage() {
   const { businesses, addBusiness, removeBusiness } = useBusinessStore()
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ name: '', description: '', industry: '', currency: 'GBP' })
-
-  const f = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
-    setForm((p) => ({ ...p, [k]: e.target.value }))
 
   const handleAdd = () => {
     if (!form.name.trim()) return
@@ -39,44 +36,62 @@ export default function SettingsPage() {
   const groqReady = true // key is already set in .env.local
 
   return (
-    <div className="p-6 max-w-2xl">
-      <div className="mb-6">
-        <h1 className="text-xl font-bold text-gray-900">Settings</h1>
-        <p className="text-sm text-gray-400">Manage your businesses</p>
+    <div className="p-8 max-w-3xl">
+      <div className="mb-8">
+        <h1 className="text-2xl font-black text-slate-900">Settings</h1>
+        <p className="mt-2 text-sm text-slate-600 font-medium">Manage your businesses and AI preferences</p>
       </div>
 
       {/* Businesses */}
-      <div className="rounded-xl border border-gray-200 bg-white overflow-hidden mb-6">
-        <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
+      <div className="rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur-sm shadow-xl overflow-hidden mb-8">
+        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5 bg-gradient-to-r from-slate-50 to-white">
           <div>
-            <p className="text-sm font-semibold text-gray-900">Your Businesses</p>
-            <p className="text-xs text-gray-400">{businesses.length} added</p>
+            <p className="text-base font-bold text-slate-900">Your Businesses</p>
+            <p className="text-xs text-slate-500 mt-1">{businesses.length} added</p>
           </div>
-          <Button size="sm" onClick={() => setShowForm((v) => !v)}>
-            <Plus className="h-4 w-4" />
+          <Button size="sm" onClick={() => setShowForm((v) => !v)} className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 shadow-lg shadow-cyan-500/25">
+            <Plus className="h-4 w-4 mr-2" />
             Add Business
           </Button>
         </div>
 
         {/* Add form */}
         {showForm && (
-          <div className="border-b border-gray-100 bg-indigo-50 px-5 py-4">
-            <p className="mb-3 text-sm font-semibold text-indigo-900">New Business</p>
+          <div className="border-b border-slate-100 bg-gradient-to-r from-cyan-50 to-blue-50 px-6 py-5">
+            <p className="mb-4 text-sm font-bold text-slate-900 flex items-center gap-2">
+              <Building2 className="h-5 w-5 text-cyan-600" />
+              New Business
+            </p>
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="mb-1 block text-xs font-medium text-gray-700">Business Name *</label>
-                <input className={inputCls} placeholder="e.g. City Café" value={form.name} onChange={f('name')} />
+                <label className="mb-2 block text-xs font-bold text-slate-700">Business Name *</label>
+                <input
+                  className={inputCls}
+                  placeholder="e.g., City Café"
+                  value={form.name}
+                  onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
+                />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-medium text-gray-700">Industry</label>
-                <select className={inputCls} value={form.industry} onChange={f('industry')}>
+                <label className="mb-2 block text-xs font-bold text-slate-700">Industry</label>
+                <select
+                  className={inputCls}
+                  value={form.industry}
+                  onChange={(e) => setForm((p) => ({ ...p, industry: e.target.value }))}
+                >
                   <option value="">Select...</option>
-                  {INDUSTRIES.map((i) => <option key={i} value={i}>{i}</option>)}
+                  {INDUSTRIES.map((i) => (
+                    <option key={i} value={i}>{i}</option>
+                  ))}
                 </select>
               </div>
               <div>
-                <label className="mb-1 block text-xs font-medium text-gray-700">Currency</label>
-                <select className={inputCls} value={form.currency} onChange={f('currency')}>
+                <label className="mb-2 block text-xs font-bold text-slate-700">Currency</label>
+                <select
+                  className={inputCls}
+                  value={form.currency}
+                  onChange={(e) => setForm((p) => ({ ...p, currency: e.target.value }))}
+                >
                   <option value="GBP">GBP (£)</option>
                   <option value="USD">USD ($)</option>
                   <option value="EUR">EUR (€)</option>
@@ -85,40 +100,56 @@ export default function SettingsPage() {
                 </select>
               </div>
               <div>
-                <label className="mb-1 block text-xs font-medium text-gray-700">Description</label>
-                <input className={inputCls} placeholder="Optional" value={form.description} onChange={f('description')} />
+                <label className="mb-2 block text-xs font-bold text-slate-700">Description</label>
+                <input
+                  className={inputCls}
+                  placeholder="Optional"
+                  value={form.description}
+                  onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
+                />
               </div>
             </div>
-            <div className="mt-3 flex gap-2">
-              <Button size="sm" onClick={handleAdd} disabled={!form.name.trim()}>Create Business</Button>
-              <Button size="sm" variant="secondary" onClick={() => setShowForm(false)}>Cancel</Button>
+            <div className="mt-5 flex gap-3">
+              <Button
+                size="sm"
+                onClick={handleAdd}
+                disabled={!form.name.trim()}
+                className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 shadow-lg shadow-cyan-500/25"
+              >
+                Create Business
+              </Button>
+              <Button size="sm" variant="secondary" onClick={() => setShowForm(false)}>
+                Cancel
+              </Button>
             </div>
           </div>
         )}
 
         {/* Business list */}
         {businesses.length === 0 && !showForm ? (
-          <div className="py-10 text-center">
-            <Building2 className="mx-auto mb-3 h-8 w-8 text-gray-200" />
-            <p className="text-sm text-gray-400">No businesses yet</p>
-            <p className="mt-1 text-xs text-gray-300">Click &ldquo;Add Business&rdquo; above to get started</p>
+          <div className="py-16 text-center">
+            <Building2 className="mx-auto mb-4 h-12 w-12 text-slate-300" />
+            <p className="text-base text-slate-600 font-medium">No businesses yet</p>
+            <p className="mt-2 text-sm text-slate-400">Click &ldquo;Add Business&rdquo; above to get started</p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-slate-100">
             {businesses.map((biz) => (
-              <div key={biz.id} className="flex items-center gap-3 px-5 py-3">
-                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-indigo-600 text-xs font-bold text-white">
+              <div key={biz.id} className="flex items-center gap-4 px-6 py-5 hover:bg-slate-50 transition-colors duration-200">
+                <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 text-sm font-black text-white shadow-lg shadow-cyan-500/20">
                   {getInitials(biz.name)}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-gray-900">{biz.name}</p>
-                  <p className="text-xs text-gray-400">
+                  <p className="font-bold text-slate-900 text-base">{biz.name}</p>
+                  <p className="text-xs text-slate-500 mt-1">
                     {[biz.industry, biz.currency, biz.description].filter(Boolean).join(' · ')}
                   </p>
                 </div>
-                <button onClick={() => removeBusiness(biz.id)}
-                  className="rounded p-1.5 text-gray-300 hover:bg-red-50 hover:text-red-500 transition-colors">
-                  <Trash2 className="h-4 w-4" />
+                <button
+                  onClick={() => removeBusiness(biz.id)}
+                  className="rounded-xl p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 transition-all duration-200"
+                >
+                  <Trash2 className="h-5 w-5" />
                 </button>
               </div>
             ))}
@@ -127,37 +158,47 @@ export default function SettingsPage() {
       </div>
 
       {/* AI Status */}
-      <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
-        <div className="border-b border-gray-100 px-5 py-4">
-          <p className="text-sm font-semibold text-gray-900">AI Status</p>
-          <p className="text-xs text-gray-400">Powered by Groq — free and fast</p>
+      <div className="rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur-sm shadow-xl overflow-hidden">
+        <div className="border-b border-slate-100 px-6 py-5 bg-gradient-to-r from-slate-50 to-white">
+          <p className="text-base font-bold text-slate-900 flex items-center gap-2">
+            <Zap className="h-5 w-5 text-cyan-600" />
+            AI Status
+          </p>
+          <p className="text-xs text-slate-500 mt-1">Powered by Groq — free and lightning fast</p>
         </div>
-        <div className="px-5 py-4 space-y-3">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-100">
-              <Bot className="h-4 w-4 text-indigo-600" />
+        <div className="px-6 py-6 space-y-4">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-100 to-blue-100 shadow-lg shadow-cyan-500/10">
+              <Bot className="h-5 w-5 text-cyan-600" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">Groq AI (Llama 3.3 70B)</p>
-              <p className="text-xs text-gray-400">Business advisor · Q&A · Summary generation</p>
+              <p className="text-sm font-bold text-slate-900">Groq AI (Llama 3.3 70B)</p>
+              <p className="text-xs text-slate-500 mt-1">Business advisor · Q&A · Summary generation</p>
             </div>
             {groqReady ? (
-              <div className="flex items-center gap-1.5 rounded-full bg-green-50 px-2.5 py-1">
-                <CheckCircle className="h-3.5 w-3.5 text-green-600" />
-                <span className="text-xs font-medium text-green-700">Connected</span>
+              <div className="flex items-center gap-2 rounded-full bg-gradient-to-r from-emerald-50 to-emerald-100 px-4 py-2 border border-emerald-200">
+                <CheckCircle className="h-4 w-4 text-emerald-600" />
+                <span className="text-xs font-bold text-emerald-700">Connected</span>
               </div>
             ) : (
-              <div className="flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1">
-                <AlertCircle className="h-3.5 w-3.5 text-red-500" />
-                <span className="text-xs font-medium text-red-600">No key</span>
+              <div className="flex items-center gap-2 rounded-full bg-gradient-to-r from-red-50 to-red-100 px-4 py-2 border border-red-200">
+                <AlertCircle className="h-4 w-4 text-red-500" />
+                <span className="text-xs font-bold text-red-600">No key</span>
               </div>
             )}
           </div>
 
-          <div className="rounded-lg bg-gray-50 px-4 py-3 text-xs text-gray-500">
-            <p className="font-medium text-gray-700 mb-1">Your Groq API key is set ✓</p>
-            <p>To update it, edit <code className="rounded bg-gray-200 px-1">.env.local</code> in the project folder and restart the server.</p>
-            <p className="mt-1">Get a free key at <span className="font-medium text-indigo-600">console.groq.com</span> if you need a new one.</p>
+          <div className="rounded-2xl bg-gradient-to-r from-slate-50 to-slate-100 px-5 py-4 text-xs text-slate-600 border border-slate-200">
+            <p className="font-bold text-slate-800 mb-2 flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 text-emerald-600" />
+              Your Groq API key is set ✓
+            </p>
+            <p className="text-sm">
+              To update it, edit <code className="rounded bg-slate-200 px-2 py-1 font-bold text-slate-800">.env.local</code> in the project folder and restart the server.
+            </p>
+            <p className="mt-2 text-sm">
+              Get a free key at <span className="font-bold text-cyan-600">console.groq.com</span> if you need a new one.
+            </p>
           </div>
         </div>
       </div>
